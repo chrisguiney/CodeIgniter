@@ -57,6 +57,8 @@ class CI_Session {
 	public $CI;
 	public $now;
 
+	protected static $_instances = array();
+
 	/**
 	 * Session Constructor
 	 *
@@ -131,7 +133,13 @@ class CI_Session {
 		// Delete expired sessions if necessary
 		$this->_sess_gc();
 
+        //Register this instance, so writes can all be done at the end of session
+		self::$_instances[] =& $this;
+
+
 		log_message('debug', 'Session routines successfully run');
+
+
 	}
 
 	// --------------------------------------------------------------------
@@ -492,8 +500,6 @@ class CI_Session {
 				$this->userdata[$key] = $val;
 			}
 		}
-
-		$this->sess_write();
 	}
 
 	// --------------------------------------------------------------------
@@ -518,7 +524,6 @@ class CI_Session {
 			}
 		}
 
-		$this->sess_write();
 	}
 
 	// ------------------------------------------------------------------------
@@ -577,6 +582,13 @@ class CI_Session {
 	public function flashdata($key)
 	{
 		return $this->userdata($this->flashdata_key.':old:'.$key);
+	}
+
+	// ------------------------------------------------------------------------
+
+	public static function get_instances()
+	{
+		return self::$_instances;
 	}
 
 	// ------------------------------------------------------------------------

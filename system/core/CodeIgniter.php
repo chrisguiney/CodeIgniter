@@ -371,6 +371,7 @@
  */
 	$EXT->_call_hook('post_controller');
 
+
 /*
  * ------------------------------------------------------
  *  Send the final rendered output to the browser
@@ -387,6 +388,19 @@
  * ------------------------------------------------------
  */
 	$EXT->_call_hook('post_system');
+
+/*
+ * ------------------------------------------------------
+ *  Write any session classes data.
+ * ------------------------------------------------------
+ */
+	if(class_exists('CI_Session'))
+	{
+		foreach(CI_Session::get_instances() as $instance)
+		{
+			$instance->sess_write();
+		}
+	}
 
 /*
  * ------------------------------------------------------
